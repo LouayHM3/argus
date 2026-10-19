@@ -1,0 +1,7 @@
+state,v_star,optimal_action,sweeps
+clean,-0.9670695505989676,noop,197
+suspected,-4.997973506667345,monitor,197
+compromised,-8.240936857032306,isolate,197
+quarantined,-3.582923996120755,monitor,197
+secured,0.0,noop,197
+breached,0.0,noop,197

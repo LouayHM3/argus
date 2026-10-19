@@ -3,5 +3,8 @@ __pycache__/
 .venv/
 .runtime/
 .pytest_cache/
-results/csv/*.csv
-results/figures/*.png
+*.zip
+report_assets/source_report.txt
+.streamlit/secrets.toml
+.env
+.env.*

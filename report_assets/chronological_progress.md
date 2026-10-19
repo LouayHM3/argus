@@ -15,3 +15,5 @@
 13. SARSA and Q-learning: study control.
 14. Final algorithm comparison: evaluate learned policies exactly.
 15. Final conclusions: report support or disagreement with the theoretical reference honestly.
+16. Executed validation (19 October 2026): installed Python and dependencies, implemented the missing MDP from Table 1 of the supplied report, corrected first-visit MC control and the configurable Q-learning step size, and passed ten tests plus the Gymnasium checker.
+17. Executed experiments: completed 25 control runs of 25,000 episodes each; decaying-step Q-learning recovered the optimal policy on all five seeds. An independent seed-0 repeat reproduced its policy and summary metrics. Generated ten CSV files, five figures, and `validation_results.md`; integration into the PDF remains pending.

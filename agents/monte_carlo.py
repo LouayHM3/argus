@@ -56,11 +56,14 @@ def mc_control(env: ArgusMicroEnv, episodes: int, alpha: float = 0.05, gamma: fl
         total = sum(item[2] for item in episode)
         returns.append(total)
         running = 0.0
+        episode_returns = np.zeros(len(episode))
+        for index in range(len(episode) - 1, -1, -1):
+            running = episode[index][2] + gamma * running
+            episode_returns[index] = running
         visited = set()
-        for state, action, reward, _ in reversed(episode):
-            running = reward + gamma * running
+        for index, (state, action, _, _) in enumerate(episode):
             if (state, action) not in visited:
-                q_values[state, action] += alpha * (running - q_values[state, action])
+                q_values[state, action] += alpha * (episode_returns[index] - q_values[state, action])
                 visited.add((state, action))
         history.append(q_values.copy())
     return q_values, returns, history

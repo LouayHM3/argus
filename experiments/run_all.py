@@ -2,6 +2,17 @@
 
 from pathlib import Path
 import argparse
+import os
+import json
+import platform
+from importlib.metadata import version
+
+ROOT = Path(__file__).resolve().parents[1]
+_plot_cache = ROOT / ".runtime" / "matplotlib"
+_plot_cache.mkdir(parents=True, exist_ok=True)
+os.environ.setdefault("MPLCONFIGDIR", str(_plot_cache))
+os.environ.setdefault("MPLBACKEND", "Agg")
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,7 +27,6 @@ from argus.mdp import Action, State, build_reference_mdp
 from argus.policies import BASELINES, policy_to_names
 
 
-ROOT = Path(__file__).resolve().parents[1]
 CSV_DIR = ROOT / "results" / "csv"
 FIG_DIR = ROOT / "results" / "figures"
 ASSET_DIR = ROOT / "report_assets"
@@ -54,6 +64,24 @@ def write_worked_episode(mdp, path: Path) -> None:
 def run(args: argparse.Namespace) -> None:
     CSV_DIR.mkdir(parents=True, exist_ok=True)
     FIG_DIR.mkdir(parents=True, exist_ok=True)
+    ASSET_DIR.mkdir(parents=True, exist_ok=True)
+    configuration = {
+        "python": platform.python_version(),
+        "packages": {name: version(name) for name in ("numpy", "pandas", "matplotlib", "gymnasium")},
+        "episodes_per_seed": args.episodes,
+        "seeds": args.seeds,
+        "gamma": args.gamma,
+        "alpha": args.alpha,
+        "epsilon_argument": args.epsilon,
+        "control_start_states": "Uniform over the four nonterminal states",
+        "prediction_start_state": "Clean",
+        "prediction_seed": args.seeds[0],
+        "prediction_policy": "always_monitor",
+        "mc_exploration": "Constant epsilon_argument",
+        "sarsa_qlearning_exploration": "max(0.02, epsilon_argument if epsilon_argument < 1 else 1/(1+0.0008*episode_index))",
+        "decaying_alpha": "alpha/(1+0.002*visit_count(state, action))",
+    }
+    (ASSET_DIR / "run_configuration.json").write_text(json.dumps(configuration, indent=2) + "\n", encoding="utf-8")
     mdp = build_reference_mdp(args.gamma)
     optimal_values, optimal_policy, sweeps = value_iteration(mdp)
     optimal_q = q_from_value(mdp, optimal_values)
@@ -81,6 +109,7 @@ def run(args: argparse.Namespace) -> None:
     q_error_curves: dict[str, list[np.ndarray]] = {}
     for algorithm, trainer in algorithms.items():
         for seed in args.seeds:
+            print(f"Training {algorithm}, seed={seed}, episodes={args.episodes}", flush=True)
             result = trainer(seed)
             q_values, returns, q_history = result
             policy = q_values.argmax(axis=1).astype(int)

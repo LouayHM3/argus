@@ -32,3 +32,19 @@ def test_reference_values():
     assert np.isclose(evaluate_policy(mdp, BASELINES["never_act"]), -6.8083, atol=0.002)
     assert np.isclose(evaluate_policy(mdp, BASELINES["always_monitor"]), -3.8346, atol=0.002)
     assert np.isclose(evaluate_policy(mdp, BASELINES["static_playbook"]), -1.4151, atol=0.002)
+
+
+def test_sampled_transitions_follow_reference_distribution():
+    mdp = build_reference_mdp()
+    rng = np.random.default_rng(42)
+    samples = 5_000
+    for state in range(4):
+        for action in Action:
+            counts = np.zeros(mdp.n_states)
+            for _ in range(samples):
+                successor, reward = mdp.sample_transition(state, action, rng)
+                counts[successor] += 1
+                assert reward == mdp.rewards[state, action, successor]
+            probabilities = mdp.transitions[state, action]
+            tolerance = 6 * np.sqrt(probabilities * (1 - probabilities) / samples) + 1 / samples
+            assert np.all(np.abs(counts / samples - probabilities) <= tolerance)

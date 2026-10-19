@@ -1,0 +1,17 @@
+{
+  "simulation_seed": 42,
+  "simulation_policy": "optimal",
+  "simulation_initial_state": "Suspected",
+  "training_method": "qlearning_decayed",
+  "training_seed": 0,
+  "training_episodes": 1000,
+  "alpha": 0.15,
+  "epsilon_initial": 1.0,
+  "gamma": 0.9,
+  "training_metrics": [
+    "-1.38134",
+    "0.41427",
+    "3.868"
+  ],
+  "reference_experiments": "25 runs, 25000 episodes per run; saved reference CSVs unchanged"
+}

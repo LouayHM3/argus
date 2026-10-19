@@ -1,0 +1,4 @@
+algorithm,v_clean,policy
+never_act,-6.808328667598102,"{'clean': 'noop', 'suspected': 'noop', 'compromised': 'noop', 'quarantined': 'noop'}"
+always_monitor,-3.8345816610850054,"{'clean': 'monitor', 'suspected': 'monitor', 'compromised': 'monitor', 'quarantined': 'monitor'}"
+static_playbook,-1.4151033538230782,"{'clean': 'noop', 'suspected': 'isolate', 'compromised': 'isolate', 'quarantined': 'noop'}"
